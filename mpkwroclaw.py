@@ -27,7 +27,7 @@ def fetch_positions(buses):
 
 def print_database(db):
     for identity, samples in db.items():
-        print(f'{identity}: {len(samples)} samples')
+        print(f'{identity}: {samples} samples')
 
 
 if __name__ == "__main__":
@@ -36,7 +36,7 @@ if __name__ == "__main__":
         p = fetch_positions([132, 107])
         for sample in p:
             identity = VehicleIdentity(line=sample['name'], course=sample['k'])
-            position = Position(x=sample['x'], y=sample['y'], timestamp=0)
+            position = Position(x=sample['x'], y=sample['y'], timestamp=int(time.time()))
             vehicles[identity].append(position)
             #print(vehicles)
         print_database(vehicles)
