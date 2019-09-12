@@ -22,22 +22,14 @@ def fetch_positions(buses):
     '''Only buses for now!'''
     post_data = {'busList[bus][]': buses}
     r = requests.post(_URL, data=post_data)
-    return r.json()
-
-
-def print_database(db):
-    for identity, samples in db.items():
-        print(f'{identity}: {samples} samples')
+    for sample in r.json():
+        identity = VehicleIdentity(line=sample['name'], course=sample['k'])
+        position = Position(x=sample['x'], y=sample['y'], timestamp=int(time.time()))
+        yield identity, position
 
 
 if __name__ == "__main__":
-    vehicles = defaultdict(list)
     while True:
-        p = fetch_positions([132, 107])
-        for sample in p:
-            identity = VehicleIdentity(line=sample['name'], course=sample['k'])
-            position = Position(x=sample['x'], y=sample['y'], timestamp=int(time.time()))
-            vehicles[identity].append(position)
-            #print(vehicles)
-        print_database(vehicles)
+        for identity, position in fetch_positions([132, 107]):
+            print(f'{identity}: {position}')
         time.sleep(1)
