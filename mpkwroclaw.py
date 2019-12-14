@@ -19,6 +19,9 @@ class VehicleIdentity(NamedTuple):
     line: int
     course: int
 
+    def __repr__(self):
+        return f"{self.line}/{self.course}"
+
 
 class Position(NamedTuple):
     x: int
