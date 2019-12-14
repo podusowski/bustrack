@@ -42,6 +42,11 @@ def _same_place(first, second):
     return dist < 20
 
 
+def _display_tavel_time_db(db, start, stop):
+    for identity, vehicle in db.items():
+        print(f"{identity} {vehicle.position}, {geodesic(vehicle.position, start).meters}m to start, {geodesic(vehicle.position, stop).meters} to stop")
+
+
 def track_travel_time(line, start, stop):
     logger.debug(f'tracking {line}')
     db = defaultdict(lambda: SimpleNamespace(seen_at_start=None))
@@ -49,13 +54,14 @@ def track_travel_time(line, start, stop):
         for identity, position in fetch_positions([line]):
             logger.debug(f"{identity} is {geodesic(position, start).meters}m far from start and {geodesic(position, stop).meters}m from stop")
             tracked_vehicle = db[identity]
+            tracked_vehicle.position = position
             if _same_place(position, start):
                 logger.debug(f'{identity} is at starting point')
                 tracked_vehicle.seen_at_start = datetime.datetime.now()
             elif _same_place(position, stop):
                 logger.debug(f'{identity} got to the end')
-                yield tracked_vehicle.seen_at_start, datetime.datetime.now()
                 tracked_vehicle.seen_at_start = None
+        _display_tavel_time_db(db, start, stop)
         time.sleep(1)
 
 
@@ -93,6 +99,4 @@ if __name__ == "__main__":
         stop = _decode_coords(args.stop)
 
         print(start, stop)
-
-        for seen_at_start, seen_at_stop in track_travel_time(args.line, start, stop):
-            print(seen_at_start, seen_at_stop)
+        track_travel_time(args.line, start, stop)
