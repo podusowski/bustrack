@@ -1,11 +1,18 @@
 import argparse
 import requests
 import time
+import datetime
+import logging
 from typing import NamedTuple
 from collections import defaultdict
+from types import SimpleNamespace
+
+from geopy.distance import geodesic
 
 
 _URL = 'http://mpk.wroc.pl/position.php'
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
 
 
 class VehicleIdentity(NamedTuple):
@@ -20,6 +27,7 @@ class Position(NamedTuple):
 
 def fetch_positions(buses):
     '''Only buses for now!'''
+    logger.debug(f'fetching positions of {buses}')
     post_data = {'busList[bus][]': buses}
     r = requests.post(_URL, data=post_data)
     for sample in r.json():
@@ -28,16 +36,27 @@ def fetch_positions(buses):
         yield identity, position
 
 
-class TrackedVehicle(NamedTuple):
-    seen_at_start: int = None
-    seen_at_middle: int = None
-    seen_at_stop: int = None
+def _same_place(first, second):
+    dist = geodesic(first, second).meters
+    logger.debug(f'distance between {first} and {second} is {dist}m')
+    return dist < 20
 
 
-def track_travel_time(line, start, middle, stop):
-    db = defaultdict(TrackedVehicle)
-    for identity, position in fetch_positions([line]):
-        tracked_vehicle = db[identity]
+def track_travel_time(line, start, stop):
+    logger.debug(f'tracking {line}')
+    db = defaultdict(lambda: SimpleNamespace(seen_at_start=None))
+    while True:
+        for identity, position in fetch_positions([line]):
+            logger.debug(f"{identity} is {geodesic(position, start).meters}m far from start and {geodesic(position, stop).meters}m from stop")
+            tracked_vehicle = db[identity]
+            if _same_place(position, start):
+                logger.debug(f'{identity} is at starting point')
+                tracked_vehicle.seen_at_start = datetime.datetime.now()
+            elif _same_place(position, stop):
+                logger.debug(f'{identity} got to the end')
+                yield tracked_vehicle.seen_at_start, datetime.datetime.now()
+                tracked_vehicle.seen_at_start = None
+        time.sleep(1)
 
 
 def _parse_args():
@@ -48,11 +67,16 @@ def _parse_args():
     watch_parser.add_argument('--line', type=int, required=True)
 
     travel_time_parser = subparsers.add_parser('travel_time', help='watch vehicle\'s travel time between two points')
+    travel_time_parser.add_argument('--line', type=int, required=True)
     travel_time_parser.add_argument('--start', type=str, required=True)
-    travel_time_parser.add_argument('--middle', type=str, required=True)
     travel_time_parser.add_argument('--stop', type=str, required=True)
 
     return parser.parse_args()
+
+
+def _decode_coords(s):
+    '''Transforms string like '51.106425, 16.950267' into tuple of floats.'''
+    return tuple(float(x) for x in s.split(','))
 
 
 if __name__ == "__main__":
@@ -65,4 +89,10 @@ if __name__ == "__main__":
             time.sleep(1)
 
     elif args.command == 'travel_time':
-        pass
+        start = _decode_coords(args.start)
+        stop = _decode_coords(args.stop)
+
+        print(start, stop)
+
+        for seen_at_start, seen_at_stop in track_travel_time(args.line, start, stop):
+            print(seen_at_start, seen_at_stop)
