@@ -2,7 +2,7 @@
 import argparse
 import time
 import datetime
-from mpkwroclaw import fetch_positions
+from mpkwroclaw import fetch_positions, fetch_positions_from_opendata
 
 
 def _parse_args():
@@ -17,11 +17,10 @@ def _parse_args():
 
 def _record(args):
     print(f'# recording started at {datetime.datetime.now()}')
-    print(f'# lines tracked: {args.line}')
-    print('$ identity;position')
+    print('$ identity;line;position')
     while True:
-        for identity, position in fetch_positions([args.line]):
-            print(f'{identity};{position}')
+        for record in fetch_positions_from_opendata():
+            print(f'{record.licence_plate_number};{record.line};{record.lat},{record.lon}')
         time.sleep(5)
 
 

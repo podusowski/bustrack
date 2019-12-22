@@ -24,6 +24,30 @@ class VehicleIdentity(NamedTuple):
         return f"{self.line}/{self.course}"
 
 
+_OPENDATA_URL = 'https://www.wroclaw.pl/open-data/datastore/dump/17308285-3977-42f7-81b7-fdd168c210a2'
+
+
+class OpenDataRecord(NamedTuple):
+    id: int
+    side_number: int
+    licence_plate_number: int
+    brigade: int
+    line: str
+    lat: float
+    lon: float
+    time: str
+
+
+def fetch_positions_from_opendata():
+    r = requests.get(_OPENDATA_URL)
+    print(r.text)
+    data = r.text
+    for line in data.splitlines()[1:]:  # 1st line is a header
+        record = OpenDataRecord(*line.split(','))
+        if record.line != 'None':
+            yield record
+
+
 def fetch_positions(buses):
     '''Only buses for now!'''
     logger.debug(f'fetching positions of {buses}')
