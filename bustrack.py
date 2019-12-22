@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 import argparse
+import time
+import datetime
+from mpkwroclaw import fetch_positions
 
 
 def _parse_args():
@@ -12,8 +15,18 @@ def _parse_args():
     return parser.parse_args()
 
 
+def _record(args):
+    print(f'# recording started at {datetime.datetime.now()}')
+    print(f'# lines tracked: {args.line}')
+    print('$ identity;position')
+    while True:
+        for identity, position in fetch_positions([args.line]):
+            print(f'{identity};{position}')
+        time.sleep(5)
+
+
 if __name__ == "__main__":
     args = _parse_args()
 
     if args.command == 'record':
-        pass
+        _record(args)
