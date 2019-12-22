@@ -1,1 +1,1 @@
-**butrack** is an attempt of using city's public data to analyse how traffic organization changes affects the public transportation system.
+**butrack** is an attempt of using city's public data to analyse how traffic organization changes affect the public transportation system.
