@@ -8,6 +8,7 @@ from collections import defaultdict
 from types import SimpleNamespace
 
 from geopy.distance import geodesic
+from utils import Position
 
 
 _URL = 'http://mpk.wroc.pl/position.php'
