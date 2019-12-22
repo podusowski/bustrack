@@ -23,14 +23,6 @@ class VehicleIdentity(NamedTuple):
         return f"{self.line}/{self.course}"
 
 
-class Position(NamedTuple):
-    x: int
-    y: int
-
-    def __repr__(self):
-        return f"{self.x:.3f},{self.y:.3f}"
-
-
 def fetch_positions(buses):
     '''Only buses for now!'''
     logger.debug(f'fetching positions of {buses}')
@@ -40,12 +32,6 @@ def fetch_positions(buses):
         identity = VehicleIdentity(line=sample['name'], course=sample['k'])
         position = Position(x=sample['x'], y=sample['y'])
         yield identity, position
-
-
-def _same_place(first, second):
-    dist = geodesic(first, second).meters
-    logger.debug(f'distance between {first} and {second} is {dist}m')
-    return dist < 20
 
 
 def _display_tavel_time_db(db, start, stop):
