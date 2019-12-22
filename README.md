@@ -10,7 +10,7 @@ First thing to do is to record the traffic. This can be done using `record` comm
 
 Data format
 ===========
-Format that **butrack** uses for its thing is something similar to the `;` separated CSV, except for some extensions. Lines starting with `#` are comments. `$` character starts a control line which describes following columns, for example:
+Format that **butrack** uses for its thing is something similar to the `;` separated CSV, except for some extensions. Lines starting with `#` are comments and `$` character starts a control line which describes columns that follow. See the example to get better grasp of it:
 
     $ name;age
     Jan;42
