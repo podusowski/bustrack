@@ -15,6 +15,8 @@ class Position(NamedTuple):
 
 
 def same_place(first, second, *, sensitivity=20):
+    if first is None or second is None:
+        return False
     dist = geodesic(first, second).meters
     print(f'distance between {first} and {second} is {dist}m')
     return dist <= sensitivity
@@ -42,3 +44,34 @@ def contains_segment(route, segment, *, sensitivity=20):
             # this means that we have passed all segment's point
             # and matched them with the route
             return True
+
+
+class _ValueIter:
+    def __init__(self, iterable):
+        self.iterable = iterable
+        self.reset()
+
+    def advance(self):
+        self.value = next(self._iter, None)
+
+    def reset(self):
+        self._iter = iter(self.iterable)
+        self.advance()
+
+
+def extract_segments(record, segments, sensitivity=20):
+    '''Extract each found segment in the record.'''
+    current = _ValueIter(record)
+    segments = [_ValueIter(s) for s in segments]
+
+    while True:
+        for segment in segments:
+            if segment.value is None:
+                yield segment.iterable
+                segment.reset()
+            elif same_place(segment.value, current.value, sensitivity=sensitivity):
+                segment.advance()
+
+        if current.value is None:
+            return
+        current.advance()

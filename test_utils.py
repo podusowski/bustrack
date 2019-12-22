@@ -1,4 +1,4 @@
-from utils import contains_segment, same_place
+from utils import contains_segment, same_place, extract_segments
 
 
 # distance between two meridians on equator is something close to 111km
@@ -44,3 +44,46 @@ def test_totally_different_segment():
 
 def test_route_doesnt_contain_segment():
     assert not contains_segment(_ROUTE_GOING_RIGHT, [(0, 1), (0, 2)])
+
+
+# extract segments
+
+
+SEGMENT_TWO_POINTS_RIGTH = [(0, 0), (1, 0)]
+SEGMENT_TEN_POINTS_RIGTH = [(x, 0) for x in range(10)]
+
+
+def test_extract_no_segments_from_empty_record():
+    assert [] == list(extract_segments([], [SEGMENT_TWO_POINTS_RIGTH]))
+
+
+def test_segment_matching_record_exactly():
+    assert [SEGMENT_TWO_POINTS_RIGTH] == list(extract_segments(SEGMENT_TWO_POINTS_RIGTH, [SEGMENT_TWO_POINTS_RIGTH]))
+
+
+def test_segment_matching_records_beginning():
+    assert [SEGMENT_TEN_POINTS_RIGTH[:3]] == list(extract_segments(SEGMENT_TEN_POINTS_RIGTH, [SEGMENT_TEN_POINTS_RIGTH[:3]]))
+
+
+def test_segment_matching_records_end():
+    assert [SEGMENT_TEN_POINTS_RIGTH[3:]] == list(extract_segments(SEGMENT_TEN_POINTS_RIGTH, [SEGMENT_TEN_POINTS_RIGTH[3:]]))
+
+
+def test_segment_matching_records_middle():
+    assert [SEGMENT_TEN_POINTS_RIGTH[3:6]] == list(extract_segments(SEGMENT_TEN_POINTS_RIGTH, [SEGMENT_TEN_POINTS_RIGTH[3:6]]))
+
+
+def test_segment_matching_records_twice():
+    segment = SEGMENT_TEN_POINTS_RIGTH[:3]
+    record = SEGMENT_TEN_POINTS_RIGTH + SEGMENT_TEN_POINTS_RIGTH
+    assert [segment, segment] == list(extract_segments(record, [segment]))
+
+
+def test_strided_segment_matching():
+    segment = SEGMENT_TEN_POINTS_RIGTH[3:6:2]
+    record = SEGMENT_TEN_POINTS_RIGTH
+    assert [segment] == list(extract_segments(record, [segment]))
+
+
+def test_different_segment_doesnt_match():
+    assert [] == list(extract_segments(SEGMENT_TEN_POINTS_RIGTH, [(20, 0), (20, 0)]))
