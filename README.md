@@ -15,4 +15,13 @@ Format that **butrack** uses for its thing is something similar to the `;` separ
     $ name;age
     Jan;42
     Stanisław;72
-    
+
+There can more than one control lines and it will simply means that new set columns should be expected from now on:
+
+    $ name;age
+    Jan;42
+    Stanisław;72
+    $ name;birthdate
+    Franciszek;10-01-1999
+
+This way, some degree of the compatibility can be kept in the future.
