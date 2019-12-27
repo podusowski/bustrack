@@ -18,8 +18,10 @@ class Position(NamedTuple):
 def same_place(first, second, *, sensitivity=20):
     if first is None or second is None:
         return False
-    dist = geodesic(first, second).meters
-    print(f'distance between {first} and {second} is {dist}m')
+    try:
+        dist = geodesic(first, second).meters
+    except Exception as e:
+        raise RuntimeError(f'could not figure out if {first} is in the same place as {second}') from e
     return dist <= sensitivity
 
 

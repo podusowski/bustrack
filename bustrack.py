@@ -4,7 +4,7 @@ import time
 import datetime
 import sys
 from mpkwroclaw import FEEDS
-from utils import parse_ecsv
+from utils import parse_ecsv, extract_segments
 
 
 def _parse_args():
@@ -35,9 +35,23 @@ def _record(args):
         time.sleep(5)
 
 
+def _parse_segment(args):
+    return [p.split(',') for p in args.segment]
+
+
 def _segment(args):
-    for record in parse_ecsv(sys.stdin):
-        print(record)
+    # this is so slow and stupid but it was faster to write
+    data = list(parse_ecsv(sys.stdin))
+    vehicles = set(r.identity for r in data)
+    segment = _parse_segment(args)
+    print(f'segment: {segment}')
+    for vehicle in vehicles:
+        record = [r.position.split(',') for r in data if r.identity == vehicle]
+        try:
+            for found_segment in extract_segments(record, [_parse_segment(args)], sensitivity=100):
+                print(found_segment)
+        except RuntimeError as e:
+            print(f'some part of the data for {vehicle} is corrupted: {e}')
 
 
 def _info(args):
