@@ -11,7 +11,6 @@ from geopy.distance import geodesic
 from utils import Position
 
 
-_URL = 'http://mpk.wroc.pl/position.php'
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
@@ -22,9 +21,6 @@ class VehicleIdentity(NamedTuple):
 
     def __repr__(self):
         return f"{self.line}/{self.course}"
-
-
-_OPENDATA_URL = 'https://www.wroclaw.pl/open-data/datastore/dump/17308285-3977-42f7-81b7-fdd168c210a2'
 
 
 class OpenDataRecord(NamedTuple):
@@ -38,25 +34,34 @@ class OpenDataRecord(NamedTuple):
     time: str
 
 
-def fetch_positions_from_opendata():
-    r = requests.get(_OPENDATA_URL)
-    print(r.text)
-    data = r.text
-    for line in data.splitlines()[1:]:  # 1st line is a header
-        record = OpenDataRecord(*line.split(','))
-        if record.line != 'None':
-            yield record
+class OpenData:
+    _URL = 'https://www.wroclaw.pl/open-data/datastore/dump/17308285-3977-42f7-81b7-fdd168c210a2'
+
+    def __iter__(self):
+        r = requests.get(OpenData._URL)
+        print(r.text)
+        data = r.text
+        for line in data.splitlines()[1:]:  # 1st line is a header
+            record = OpenDataRecord(*line.split(','))
+            if record.line != 'None':
+                yield record
 
 
-def fetch_positions(buses):
-    '''Only buses for now!'''
-    logger.debug(f'fetching positions of {buses}')
-    post_data = {'busList[bus][]': buses}
-    r = requests.post(_URL, data=post_data)
-    for sample in r.json():
-        identity = VehicleIdentity(line=sample['name'], course=sample['k'])
-        position = Position(x=sample['x'], y=sample['y'])
-        yield identity, position
+class Mpk:
+    _URL = 'http://mpk.wroc.pl/position.php'
+
+    def __init__(self, buses):
+        '''Only buses for now!'''
+        self._lines = buses
+
+    def __iter__(self):
+        logger.debug(f'fetching positions of {self._lines}')
+        post_data = {'busList[bus][]': self._lines}
+        r = requests.post(Mpk._URL, data=post_data)
+        for sample in r.json():
+            identity = VehicleIdentity(line=sample['name'], course=sample['k'])
+            position = Position(x=sample['x'], y=sample['y'])
+            yield identity, position
 
 
 def _display_tavel_time_db(db, start, stop):

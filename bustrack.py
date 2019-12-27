@@ -2,7 +2,7 @@
 import argparse
 import time
 import datetime
-from mpkwroclaw import fetch_positions, fetch_positions_from_opendata
+from mpkwroclaw import OpenData
 
 
 def _parse_args():
@@ -18,8 +18,9 @@ def _parse_args():
 def _record(args):
     print(f'# recording started at {datetime.datetime.now()}')
     print('$ time;identity;line;position')
+    feed = OpenData()
     while True:
-        for record in fetch_positions_from_opendata():
+        for record in feed:
             print(f'{record.time};{record.side_number};{record.line};{record.lat},{record.lon}')
         time.sleep(5)
 
