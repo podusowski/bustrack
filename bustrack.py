@@ -2,7 +2,7 @@
 import argparse
 import time
 import datetime
-from mpkwroclaw import OpenData
+from mpkwroclaw import OpenData, FEEDS
 
 
 def _parse_args():
@@ -11,6 +11,7 @@ def _parse_args():
 
     record_parser = subparsers.add_parser('record', help='record line\'s position')
     record_parser.add_argument('--line', type=int, required=True)
+    record_parser.add_argument('--feed', type=str, default='mpk', help='where take the data from', choices=['mpk', 'opendata'])
 
     return parser.parse_args()
 
@@ -18,10 +19,10 @@ def _parse_args():
 def _record(args):
     print(f'# recording started at {datetime.datetime.now()}')
     print('$ time;identity;line;position')
-    feed = OpenData()
+    feed = FEEDS[args.feed](args.line)
     while True:
         for record in feed:
-            print(f'{record.time};{record.side_number};{record.line};{record.lat},{record.lon}')
+            print(f'{record.time};{record.identity};{record.line};{record.lat},{record.lon}')
         time.sleep(5)
 
 

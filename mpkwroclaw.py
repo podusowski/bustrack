@@ -33,18 +33,36 @@ class OpenDataRecord(NamedTuple):
     lon: float
     time: str
 
+    @property
+    def identity(self):
+        return self.side_number
+
 
 class OpenData:
     _URL = 'https://www.wroclaw.pl/open-data/datastore/dump/17308285-3977-42f7-81b7-fdd168c210a2'
 
+    def __init__(self, lines):
+        self._lines = lines
+
     def __iter__(self):
         r = requests.get(OpenData._URL)
-        print(r.text)
         data = r.text
         for line in data.splitlines()[1:]:  # 1st line is a header
             record = OpenDataRecord(*line.split(','))
-            if record.line != 'None':
+            if record.line in self._lines:
                 yield record
+
+
+class MpkRecord(NamedTuple):
+    course: int
+    line: str
+    lat: float
+    lon: float
+    time: str
+
+    @property
+    def identity(self):
+        return f'{self.line}[{self.course}]'
 
 
 class Mpk:
@@ -59,9 +77,10 @@ class Mpk:
         post_data = {'busList[bus][]': self._lines}
         r = requests.post(Mpk._URL, data=post_data)
         for sample in r.json():
-            identity = VehicleIdentity(line=sample['name'], course=sample['k'])
-            position = Position(x=sample['x'], y=sample['y'])
-            yield identity, position
+            yield MpkRecord(course=sample['k'], line=sample['name'], lat=sample['x'], lon=sample['y'], time=datetime.datetime.now())
+
+
+FEEDS = {'opendata': OpenData, 'mpk': Mpk}
 
 
 def _display_tavel_time_db(db, start, stop):
