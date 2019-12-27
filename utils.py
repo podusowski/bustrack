@@ -1,5 +1,6 @@
 import logging
 from typing import NamedTuple
+from types import SimpleNamespace
 from geopy.distance import geodesic
 
 
@@ -79,4 +80,13 @@ def extract_segments(record, segments, sensitivity=20):
 
 def parse_ecsv(iterable):
     '''Parse externded SCV.'''
-    pass
+    fmt = None
+    for line in iterable:
+        if len(line) == 0 or line.startswith('#'):
+            continue
+        elif line.startswith('$'):
+            fmt = line[1:].strip().split(';')
+            print(f'new format: {fmt}')
+        elif fmt is not None:
+            data = line.split(';')
+            yield SimpleNamespace(**dict(zip(fmt, data)))

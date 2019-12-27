@@ -1,4 +1,4 @@
-from utils import contains_segment, same_place, extract_segments
+from utils import contains_segment, same_place, extract_segments, parse_ecsv
 
 
 # distance between two meridians on equator is something close to 111km
@@ -87,3 +87,19 @@ def test_strided_segment_matching():
 
 def test_different_segment_doesnt_match():
     assert [] == list(extract_segments(SEGMENT_TEN_POINTS_RIGTH, [(20, 0), (20, 0)]))
+
+
+# ecsv
+
+
+def test_ecsv_parsing():
+    input = ['# comment', '$ name;age', 'piotr;20', '$ name;occupancy;experience', 'adam;programmer;low']
+
+    output = list(parse_ecsv(input))
+
+    assert output[0].name == 'piotr'
+    assert output[0].age == '20'
+
+    assert output[1].name == 'adam'
+    assert output[1].occupancy == 'programmer'
+    assert output[1].experience == 'low'
