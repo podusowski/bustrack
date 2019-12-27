@@ -20,6 +20,8 @@ def _parse_args():
     segment_parser = subparsers.add_parser('segment', help='extract segment from previously recorded data')
     segment_parser.add_argument('segment', metavar='point', nargs='+', help='points for constructing a segment')
 
+    subparsers.add_parser('info', help='some brief info about gathered data')
+
     return parser.parse_args()
 
 
@@ -38,6 +40,11 @@ def _segment(args):
         print(record)
 
 
+def _info(args):
+    data = parse_ecsv(sys.stdin)
+    print(f'vehicles: {set(r.identity for r in data)}')
+
+
 if __name__ == "__main__":
     args = _parse_args()
 
@@ -45,3 +52,5 @@ if __name__ == "__main__":
         _record(args)
     elif args.command == 'segment':
         _segment(args)
+    elif args.command == 'info':
+        _info(args)
