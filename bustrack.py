@@ -15,6 +15,9 @@ def _parse_args():
     feeds = list(FEEDS.keys())
     record_parser.add_argument('--feed', type=str, default=feeds[0], help='where take the data from', choices=feeds)
 
+    segment_parser = subparsers.add_parser('segment', help='extract segment from previously recorded data')
+    segment_parser.add_argument('segment', metavar='point', nargs='+', help='points for constructing a segment')
+
     return parser.parse_args()
 
 
@@ -28,8 +31,14 @@ def _record(args):
         time.sleep(5)
 
 
+def _segment(args):
+    pass
+
+
 if __name__ == "__main__":
     args = _parse_args()
 
     if args.command == 'record':
         _record(args)
+    elif args.command == 'segment':
+        _segment(args)

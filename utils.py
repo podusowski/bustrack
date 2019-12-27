@@ -75,3 +75,8 @@ def extract_segments(record, segments, sensitivity=20):
         if current.value is None:
             return
         current.advance()
+
+
+def parse_ecsv(iterable):
+    '''Parse externded SCV.'''
+    pass

@@ -8,6 +8,16 @@ First thing to do is to record the traffic. This can be done using `record` comm
     ./bustrack.py record --line 132
 
 
+Segments
+========
+After you gather some data, you can do some analysis. One of them is extracting segments.
+
+    ./bustrack.py segment POINTS
+
+Sample segment (pl. Jana Pawła II -> Młodych Techników -> pl. Strzegomski -> Śrubowa):
+    51.11208,17.02068 51.11299,17.01281 51.11317,17.00783 51.11190,17.00013
+
+
 Data format
 ===========
 Format that **butrack** uses for its thing is something similar to the `;` separated CSV, except for some extensions. Lines starting with `#` are comments and `$` character starts a control line which describes columns that follow. See the example to get better grasp of it:
