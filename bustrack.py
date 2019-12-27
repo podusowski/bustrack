@@ -2,7 +2,9 @@
 import argparse
 import time
 import datetime
+import sys
 from mpkwroclaw import FEEDS
+from utils import parse_ecsv
 
 
 def _parse_args():
@@ -32,7 +34,8 @@ def _record(args):
 
 
 def _segment(args):
-    pass
+    for record in parse_ecsv(sys.stdin):
+        print(record)
 
 
 if __name__ == "__main__":

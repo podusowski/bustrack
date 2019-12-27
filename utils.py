@@ -79,7 +79,7 @@ def extract_segments(record, segments, sensitivity=20):
 
 
 def parse_ecsv(iterable):
-    '''Parse externded SCV.'''
+    '''Parse extended CSV.'''
     fmt = None
     for line in iterable:
         if len(line) == 0 or line.startswith('#'):
@@ -88,5 +88,5 @@ def parse_ecsv(iterable):
             fmt = line[1:].strip().split(';')
             print(f'new format: {fmt}')
         elif fmt is not None:
-            data = line.split(';')
+            data = line.strip().split(';')
             yield SimpleNamespace(**dict(zip(fmt, data)))
