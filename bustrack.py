@@ -39,6 +39,20 @@ def _parse_segment(args):
     return [p.split(',') for p in args.segment]
 
 
+class RecordedPoint:
+    '''Geo-algorithms works on tuple-like points, this class acts
+    like one while storing more stuff that we'll need later.'''
+
+    def __init__(self, record):
+        self._record = record
+
+    def __iter__(self):
+        yield from self._record.position.split(',')
+
+    def __str__(self):
+        return f'{self._record.time}'
+
+
 def _segment(args):
     # this is so slow and stupid but it was faster to write
     data = list(parse_ecsv(sys.stdin))
@@ -46,10 +60,10 @@ def _segment(args):
     segment = _parse_segment(args)
     print(f'segment: {segment}')
     for vehicle in vehicles:
-        record = [r.position.split(',') for r in data if r.identity == vehicle]
+        record = [RecordedPoint(r) for r in data if r.identity == vehicle]
         try:
-            for found_segment in extract_segments(record, [_parse_segment(args)], sensitivity=100):
-                print(found_segment)
+            for start, stop in extract_segments(record, [_parse_segment(args)], sensitivity=100):
+                print(f'{start} -> {stop}')
         except RuntimeError as e:
             print(f'some part of the data for {vehicle} is corrupted: {e}')
 

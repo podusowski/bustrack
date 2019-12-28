@@ -25,9 +25,9 @@ def same_place(first, second, *, sensitivity=20):
     if first is None or second is None:
         return False
     try:
-        dist = geodesic(first, second).meters
+        dist = geodesic(tuple(first), tuple(second)).meters
     except Exception as e:
-        raise RuntimeError(f'could not figure out if {first} is in the same place as {second}') from e
+        raise RuntimeError(f'could not figure out if {first} is in the same place as {second}: {e}') from e
     return dist <= sensitivity
 
 
