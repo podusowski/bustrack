@@ -108,7 +108,6 @@ def parse_ecsv(iterable):
             continue
         elif line.startswith('$'):
             fmt = line[1:].strip().split(';')
-            print(f'new format: {fmt}')
         elif fmt is not None:
             data = line.strip().split(';')
             yield SimpleNamespace(**dict(zip(fmt, data)))
