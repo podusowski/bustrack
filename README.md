@@ -5,18 +5,19 @@ Recording
 =========
 First thing to do is to record the traffic. This can be done using `record` command like this:
 
-    ./bustrack.py record --line 132
+    ./bustrack.py record --line 132 > 132.bustrack
+
+Gathered data will be saved in `132.bustrack`
 
 
 Segments
 ========
-After you gather some data, you can do some analysis. One of them is extracting segments.
+After you gather some data, you can do some analysis. One of them is extracting segments:
 
-    ./bustrack.py segment POINTS
+    ./bustrack.py segment 51.11208,17.02068 51.11299,17.01281 51.11317,17.00783 51.11190,17.00013 < 132.bustrack
 
-Sample segment (pl. Jana Pawła II -> Młodych Techników -> pl. Strzegomski -> Śrubowa):
-    51.11208,17.02068 51.11299,17.01281 51.11317,17.00783 51.11190,17.00013
-
+This will find all trips through sample segment (pl. Jana Pawła II -> Młodych Techników -> pl. Strzegomski -> Śrubowa).
+    
 
 Data format
 ===========
