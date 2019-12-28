@@ -45,9 +45,10 @@ class RecordedPoint:
 
     def __init__(self, record):
         self._record = record
+        self.lat, self.lon = self._record.position.split(',')
 
     def __iter__(self):
-        yield from self._record.position.split(',')
+        yield from (self.lat, self.lon)
 
     def __str__(self):
         return f'{self._record.time}'
