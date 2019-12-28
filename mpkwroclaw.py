@@ -36,6 +36,10 @@ class OpenDataRecord(NamedTuple):
     def identity(self):
         return self.side_number
 
+    @property
+    def datetime(self):
+        return datetime.datetime.strptime(self.time, '%Y-%m-%d %H:%M:%S')
+
 
 class OpenData:
     _URL = 'https://www.wroclaw.pl/open-data/datastore/dump/17308285-3977-42f7-81b7-fdd168c210a2'
@@ -57,7 +61,7 @@ class MpkRecord(NamedTuple):
     line: str
     lat: float
     lon: float
-    time: str
+    datetime: datetime.datetime
 
     @property
     def identity(self):
@@ -76,7 +80,7 @@ class Mpk:
         post_data = {'busList[bus][]': self._lines}
         r = requests.post(Mpk._URL, data=post_data)
         for sample in r.json():
-            yield MpkRecord(course=sample['k'], line=sample['name'], lat=sample['x'], lon=sample['y'], time=datetime.datetime.now())
+            yield MpkRecord(course=sample['k'], line=sample['name'], lat=sample['x'], lon=sample['y'], datetime=datetime.datetime.now())
 
 
 FEEDS = {'opendata': OpenData, 'mpk': Mpk}

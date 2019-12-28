@@ -3,8 +3,9 @@ import argparse
 import time
 import datetime
 import sys
+from collections import defaultdict
 from mpkwroclaw import FEEDS
-from utils import parse_ecsv, extract_segments
+from utils import parse_ecsv, extract_segments, distance
 
 
 def _parse_args():
@@ -27,11 +28,11 @@ def _parse_args():
 
 def _record(args):
     print(f'# recording started at {datetime.datetime.now()}')
-    print('$ time;identity;line;position')
+    print('$ timestamp;identity;line;position')
     feed = FEEDS[args.feed]([args.line])
     while True:
         for record in feed:
-            print(f'{record.time};{record.identity};{record.line};{record.lat},{record.lon}')
+            print(f'{int(record.datetime.timestamp())};{record.identity};{record.line};{record.lat},{record.lon}')
         time.sleep(5)
 
 
@@ -46,12 +47,13 @@ class RecordedPoint:
     def __init__(self, record):
         self._record = record
         self.lat, self.lon = self._record.position.split(',')
+        self.datetime = datetime.datetime.fromtimestamp(int(self._record.timestamp))
 
     def __iter__(self):
         yield from (self.lat, self.lon)
 
     def __str__(self):
-        return f'{self._record.time}'
+        return f'{self._record.datetime}'
 
 
 def _segment(args):
@@ -70,8 +72,22 @@ def _segment(args):
 
 
 def _info(args):
-    data = parse_ecsv(sys.stdin)
+    data = list(parse_ecsv(sys.stdin))
     print(f'vehicles: {set(r.identity for r in data)}')
+
+    distances = defaultdict(lambda: (0, None))
+
+    def accumulate_distance(current_distance, last_point, current_point):
+        if last_point is None:
+            return current_distance, current_point
+        return current_distance + distance(last_point, current_point), current_point
+
+    for r in data:
+        distances[r.identity] = accumulate_distance(*distances[r.identity], RecordedPoint(r))
+
+    for identity, data in distances.items():
+        dist, _ = data
+        print(f'{identity}: {round(dist / 1000, 2)}km tracked')
 
 
 if __name__ == "__main__":

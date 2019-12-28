@@ -31,6 +31,10 @@ def same_place(first, second, *, sensitivity=20):
     return dist <= sensitivity
 
 
+def distance(first, second):
+    return geodesic(tuple(first), tuple(second)).meters
+
+
 def contains_segment(route, segment, *, sensitivity=20):
     '''Checks if vehicle's route passed trough a given segment.'''
     route = iter(route)

@@ -21,7 +21,7 @@ This will find all trips through sample segment (pl. Jana Pawła II -> Młodych 
 
 Some boring, developer related stuff
 ====================================
-Format that **butrack** uses is something similar to the `;` separated CSV, except for some extensions. Lines starting with `#` are comments and `$` character starts a control line which describes columns that follow. See the example to get better grasp of it:
+Format that **butrack** uses is something similar to the `;` separated CSV except for some extensions. Lines starting with `#` are comments and `$` character starts a control line which describes columns that follow. See the example to get better grasp of it:
 
     $ name;age
     Jan;42
