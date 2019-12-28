@@ -19,9 +19,9 @@ After you gather some data, you can do some analysis. One of them is extracting 
 This will find all trips through sample segment (pl. Jana Pawła II -> Młodych Techników -> pl. Strzegomski -> Śrubowa).
     
 
-Data format
-===========
-Format that **butrack** uses for its thing is something similar to the `;` separated CSV, except for some extensions. Lines starting with `#` are comments and `$` character starts a control line which describes columns that follow. See the example to get better grasp of it:
+Some boring, developer related stuff
+====================================
+Format that **butrack** uses is something similar to the `;` separated CSV, except for some extensions. Lines starting with `#` are comments and `$` character starts a control line which describes columns that follow. See the example to get better grasp of it:
 
     $ name;age
     Jan;42
