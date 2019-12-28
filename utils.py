@@ -1,5 +1,5 @@
 import logging
-from typing import NamedTuple
+from typing import NamedTuple, Any, Iterable
 from types import SimpleNamespace
 from geopy.distance import geodesic
 
@@ -7,12 +7,18 @@ from geopy.distance import geodesic
 logger = logging.getLogger(__name__)
 
 
-class Position(NamedTuple):
-    x: int
-    y: int
+class Point(NamedTuple):
+    lat: int
+    lon: int
 
     def __repr__(self):
-        return f"{self.x:.3f},{self.y:.3f}"
+        return f"{self.lat:.3f},{self.lon:.3f}"
+
+
+class RecordPoint(NamedTuple):
+    lat: float
+    lon: float
+    time: Any
 
 
 def same_place(first, second, *, sensitivity=20):
@@ -62,17 +68,27 @@ class _ValueIter:
         self.advance()
 
 
-def extract_segments(record, segments, sensitivity=20):
-    '''Extract each found segment in the record.'''
+class _Segment(_ValueIter):
+    def __init__(self, iterable):
+        super().__init__(iterable)
+        self.record_starting_point = None
+        self.record_last_point = None
+
+
+def extract_segments(record: Iterable[RecordPoint], segments, sensitivity=20):
+    '''Extract each found segment in record.'''
     current = _ValueIter(record)
-    segments = [_ValueIter(s) for s in segments]
+    segments = [_Segment(s) for s in segments]
 
     while True:
         for segment in segments:
             if segment.value is None:
-                yield segment.iterable
+                yield segment.record_starting_point, segment.record_last_point
                 segment.reset()
             elif same_place(segment.value, current.value, sensitivity=sensitivity):
+                if segment.record_starting_point is None:
+                    segment.record_starting_point = current.value
+                segment.record_last_point = current.value
                 segment.advance()
 
         if current.value is None:

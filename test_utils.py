@@ -58,11 +58,11 @@ def test_extract_no_segments_from_empty_record():
 
 
 def test_segment_matching_record_exactly():
-    assert [SEGMENT_TWO_POINTS_RIGTH] == list(extract_segments(SEGMENT_TWO_POINTS_RIGTH, [SEGMENT_TWO_POINTS_RIGTH]))
+    assert [((0, 0), (1, 0))] == list(extract_segments(SEGMENT_TWO_POINTS_RIGTH, [SEGMENT_TWO_POINTS_RIGTH]))
 
 
 def test_segment_matching_records_beginning():
-    assert [SEGMENT_TEN_POINTS_RIGTH[:3]] == list(extract_segments(SEGMENT_TEN_POINTS_RIGTH, [SEGMENT_TEN_POINTS_RIGTH[:3]]))
+    assert [((0, 0), (2, 0))] == list(extract_segments(SEGMENT_TEN_POINTS_RIGTH, [SEGMENT_TEN_POINTS_RIGTH[:3]]))
 
 
 def test_segment_matching_records_end():
