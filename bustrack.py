@@ -53,7 +53,7 @@ class RecordedPoint:
         yield from (self.lat, self.lon)
 
     def __str__(self):
-        return f'{self._record.datetime}'
+        return f'{self.datetime}'
 
 
 def _segment(args):
