@@ -13,7 +13,7 @@ def _parse_args():
     subparsers = parser.add_subparsers(help='commands', dest='command', required=True)
 
     record_parser = subparsers.add_parser('record', help='record line\'s position')
-    record_parser.add_argument('--line', type=str, required=True)
+    record_parser.add_argument('--line', nargs='+', type=str, required=True)
 
     feeds = list(FEEDS.keys())
     record_parser.add_argument('--feed', type=str, default=feeds[0], help='where take the data from', choices=feeds)
@@ -29,7 +29,7 @@ def _parse_args():
 def _record(args):
     print(f'# recording started at {datetime.datetime.now()}')
     print('$ timestamp;identity;line;position')
-    feed = FEEDS[args.feed]([args.line])
+    feed = FEEDS[args.feed](args.line)
     while True:
         for record in feed:
             print(f'{int(record.datetime.timestamp())};{record.identity};{record.line};{record.lat},{record.lon}')
