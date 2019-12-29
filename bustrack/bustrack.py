@@ -19,6 +19,7 @@ def _parse_args():
     record_parser.add_argument('--feed', type=str, default=feeds[0], help='where take the data from', choices=feeds)
 
     segment_parser = subparsers.add_parser('segment', help='extract segment from previously recorded data')
+    segment_parser.add_argument('--sensitivity', type=int, default=100, help='distance in meters at which two points should be considered as same')
     segment_parser.add_argument('segment', metavar='point', nargs='+', help='points for constructing a segment')
 
     subparsers.add_parser('info', help='some brief info about gathered data')
@@ -65,7 +66,7 @@ def _segment(args):
     for line, vehicle in vehicles:
         record = [RecordedPoint(r) for r in data if r.identity == vehicle]
         try:
-            for start, stop in extract_segments(record, [_parse_segment(args)], sensitivity=100):
+            for start, stop in extract_segments(record, [_parse_segment(args)], sensitivity=args.sensitivity):
                 duration = stop.datetime - start.datetime
                 print(f'line: {line}, {start} - {stop}, duration: {duration}')
         except RuntimeError as e:
