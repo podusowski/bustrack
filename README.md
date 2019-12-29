@@ -21,9 +21,8 @@ This will find all trips through sample segment (_pl. Jana Pawła II -> Młodych
 In result you should get something like this:
 
     ./bustrack.py segment `cat srubowa_pl-jana-pawla-ii.segment` < mpk_132.bustrack 
-    segment: [['51.11190', '17.00013'], ['51.11317', '17.00783'], ['51.11299', '17.01281'], ['51.11208', '17.02068']]
-    2019-12-28 21:02:03 -> 2019-12-28 21:06:51
-    2019-12-28 21:32:41 -> 2019-12-28 21:38:30
+    2019-12-28 21:32:41 - 2019-12-28 21:38:30, duration: 0:05:49
+    2019-12-28 21:02:03 - 2019-12-28 21:06:51, duration: 0:04:48
 
 Which are times that it took bus to travel this segment.
     

@@ -61,12 +61,13 @@ def _segment(args):
     data = list(parse_ecsv(sys.stdin))
     vehicles = set(r.identity for r in data)
     segment = _parse_segment(args)
-    print(f'segment: {segment}')
+
     for vehicle in vehicles:
         record = [RecordedPoint(r) for r in data if r.identity == vehicle]
         try:
             for start, stop in extract_segments(record, [_parse_segment(args)], sensitivity=100):
-                print(f'{start} -> {stop}')
+                duration = stop.datetime - start.datetime
+                print(f'{start} - {stop}, duration: {duration}')
         except RuntimeError as e:
             print(f'some part of the data for {vehicle} is corrupted: {e}')
 
