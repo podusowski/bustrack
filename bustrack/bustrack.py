@@ -29,11 +29,11 @@ def _parse_args():
 
 def _record(args):
     print(f'# recording started at {datetime.datetime.now()}')
-    print('$ timestamp;identity;line;position')
+    print('$ datetime;timestamp;identity;line;position')
     feed = FEEDS[args.feed](args.line)
     while True:
         for record in feed:
-            print(f'{int(record.datetime.timestamp())};{record.identity};{record.line};{record.lat},{record.lon}')
+            print(f'{record.datetime};{int(record.datetime.timestamp())};{record.identity};{record.line};{record.lat},{record.lon}')
         time.sleep(5)
 
 
