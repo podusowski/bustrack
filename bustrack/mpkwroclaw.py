@@ -11,7 +11,6 @@ from geopy.distance import geodesic
 
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
 
 
 class VehicleIdentity(NamedTuple):
@@ -71,9 +70,8 @@ class MpkRecord(NamedTuple):
 class Mpk:
     _URL = 'http://mpk.wroc.pl/position.php'
 
-    def __init__(self, buses):
-        '''Only buses for now!'''
-        self._lines = buses
+    def __init__(self, lines):
+        self._lines = lines
 
     def __iter__(self):
         logger.debug(f'fetching positions of {self._lines}')
