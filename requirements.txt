@@ -1,3 +1,4 @@
 requests
 geopy
 pytest
+more-itertools

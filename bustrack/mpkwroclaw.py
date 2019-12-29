@@ -81,4 +81,20 @@ class Mpk:
             yield MpkRecord(course=sample['k'], line=sample['name'], lat=sample['x'], lon=sample['y'], datetime=datetime.datetime.now())
 
 
-FEEDS = {'opendata': OpenData, 'mpk': Mpk}
+class _Unique:
+    '''Feed adaptor that skips records that have same position as last one.'''
+
+    def __init__(self, feed):
+        self._feed = feed
+        self._db = defaultdict(lambda: SimpleNamespace(lat=None, lon=None))
+
+    def __iter__(self):
+        for r in self._feed:
+            last = self._db[r.identity]
+            if (last.lat, last.lon) != (r.lat, r.lon):
+                yield r
+                self._db[r.identity] = r
+
+
+FEEDS = {'opendata': lambda lines: _Unique(OpenData(lines)),
+         'mpk': lambda lines: _Unique(Mpk(lines))}
