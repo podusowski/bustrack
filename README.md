@@ -14,8 +14,8 @@ Feeds and reliability
 ---------------------
 These are the sources you can get the data from. In general, they are highly unreliable, meaning that bus or tram will usually travel few hundreds meters before its position gets updated. You can choose between two services:
 
-- [https://www.wroclaw.pl/open-data/dataset/lokalizacjapojazdowkomunikacjimiejskiejnatrasie_data](otwarte dane Wrocław) - `--feed opendata`
-- [http://mpk.wroc.pl/jak-jezdzimy/mapa-pozycji-pojazdow](Mapa pozycji pojazdów) - `--feed mpk`
+- (otwarte dane Wrocław)[https://www.wroclaw.pl/open-data/dataset/lokalizacjapojazdowkomunikacjimiejskiejnatrasie_data] - `--feed opendata`
+- (Mapa pozycji pojazdów)[http://mpk.wroc.pl/jak-jezdzimy/mapa-pozycji-pojazdow] - `--feed mpk`
 
 _otwarte dane Wrocław_ seems to be official way to do this kind of stuff but I found it be broken often.
 
