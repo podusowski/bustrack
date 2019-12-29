@@ -3,6 +3,7 @@ import requests
 import time
 import datetime
 import logging
+import warnings
 from typing import NamedTuple
 from collections import defaultdict
 from types import SimpleNamespace
@@ -75,10 +76,13 @@ class Mpk:
 
     def __iter__(self):
         logger.debug(f'fetching positions of {self._lines}')
-        post_data = {'busList[bus][]': self._lines}
-        r = requests.post(Mpk._URL, data=post_data)
-        for sample in r.json():
-            yield MpkRecord(course=sample['k'], line=sample['name'], lat=sample['x'], lon=sample['y'], datetime=datetime.datetime.now())
+        try:
+            post_data = {'busList[bus][]': self._lines}
+            r = requests.post(Mpk._URL, data=post_data)
+            for sample in r.json():
+                yield MpkRecord(course=sample['k'], line=sample['name'], lat=sample['x'], lon=sample['y'], datetime=datetime.datetime.now())
+        except Exception as e:
+            warnings.warn(f'update failed, reason: {e}')
 
 
 class _Unique:
