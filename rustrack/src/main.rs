@@ -47,7 +47,7 @@ mod tests
     #[test]
     fn name() {
         let input = vec!["$x;y", "1,2", "3,4"];
-        let ecsv = Ecsv::<Vec>::new(input);
+        let ecsv = super::Ecsv::new(input.iter());
     }
 }
 
