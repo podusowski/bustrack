@@ -1,11 +1,11 @@
-#!/usr/bin/env python3
 import argparse
 import time
 import datetime
 import sys
 from collections import defaultdict
-from mpkwroclaw import FEEDS
-from utils import parse_ecsv, extract_segments, distance
+
+from .mpkwroclaw import FEEDS
+from .utils import parse_ecsv, extract_segments, distance
 
 
 def _parse_args():
@@ -54,7 +54,7 @@ class RecordedPoint:
         yield from (self.lat, self.lon)
 
     def __str__(self):
-        return f'{self.datetime}'
+        return f'{self.datetime} at {self.lat:.3f}, {self.lon:.3f}'
 
 
 def _segment(args):

@@ -1,4 +1,4 @@
-from utils import contains_segment, same_place, extract_segments, parse_ecsv
+from .utils import contains_segment, same_place, extract_segments, parse_ecsv
 
 
 # distance between two meridians on equator is something close to 111km
