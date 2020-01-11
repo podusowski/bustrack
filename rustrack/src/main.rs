@@ -1,9 +1,10 @@
-use std::io;
+use std::io::{self, BufRead};
 use std::iter::Iterator;
 
 #[macro_use] extern crate maplit;
 
 mod ecsv;
+use ecsv::Ecsv;
 
 struct Record
 {
@@ -22,24 +23,11 @@ impl Record
 
 fn main() -> io::Result<()>
 {
-    let mut buf = String::new();
-    let mut fmt = Vec::<String>::new();
+    let input = io::stdin();
+    let lines = input.lock().lines().filter_map(Result::ok);
 
-    loop
-    {
-        io::stdin().read_line(&mut buf)?;
-        if buf.starts_with("#")
-        {
-            continue
-        }
-        else if buf.starts_with("$")
-        {
-            fmt = buf.trim().split(";").map(|s| s.to_string()).collect();
-        }
-
-        let r = Record::from_string(&buf);
-        println!("Hello, world! {}", buf);
-        println!("fmt: {:?}", fmt);
+    for elem in Ecsv::new(lines) {
+        println!("{:?}", elem);
     }
 
     Ok(())

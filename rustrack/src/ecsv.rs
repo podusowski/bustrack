@@ -1,21 +1,21 @@
 use std::iter::{Iterator, FromIterator};
 use std::collections::HashMap;
 
-struct Ecsv<T> where T: IntoIterator
+pub struct Ecsv<T> where T: IntoIterator
 {
     input: T::IntoIter,
     fmt: Vec::<String>
 }
 
-impl<'a, T> Ecsv<T> where T: IntoIterator<Item=&'a str>
+impl<T> Ecsv<T> where T: IntoIterator<Item=String>
 {
-    fn new(reader: T) -> Ecsv<T>
+    pub fn new(reader: T) -> Ecsv<T>
     {
         Ecsv::<T>{input: reader.into_iter(), fmt: Vec::new()}
     }
 }
 
-impl<'a, T> Iterator for Ecsv<T> where T: IntoIterator<Item=&'a str>
+impl<T> Iterator for Ecsv<T> where T: IntoIterator<Item=String>
 {
     type Item = HashMap::<String, String>;
 
@@ -46,7 +46,7 @@ mod tests
 {
     #[test]
     fn read_simple_ecsv() {
-        let input = vec!["$x;y", "1;2", "3;4", "$ lat;lon", "5;6"];
+        let input = ["$x;y", "1;2", "3;4", "$ lat;lon", "5;6"].iter().map(|s| s.to_string());
         let mut ecsv = super::Ecsv::new(input);
 
         assert_eq!(Some(hashmap!("x".to_string() => String::from("1"),
