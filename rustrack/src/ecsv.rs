@@ -1,4 +1,4 @@
-use std::iter::Iterator;
+use std::iter::{Iterator, FromIterator};
 use std::collections::HashMap;
 
 struct Ecsv<T> where T: IntoIterator
@@ -21,8 +21,6 @@ impl<'a, T> Iterator for Ecsv<T> where T: IntoIterator<Item=&'a str>
 
     fn next(self: &mut Self) -> Option<Self::Item>
     {
-        let mut ret = HashMap::<String, String>::new();
-
         loop
         {
             match self.input.next()
@@ -34,13 +32,8 @@ impl<'a, T> Iterator for Ecsv<T> where T: IntoIterator<Item=&'a str>
                 },
                 Some(s) => {
                     let items = s.split(";");
-                    let items = self.fmt.iter().zip(items);
-                    for (k, v) in items
-                    {
-                        // TODO: how to do this without string deep-copy?
-                        ret.insert(k.to_string(), v.to_string());
-                    }
-                    return Some(ret);
+                    let items = self.fmt.iter().zip(items).map(|x| (x.0.to_string(), x.1.to_string()));
+                    return Some(HashMap::from_iter(items));
                 },
                 None => return None,
             }
