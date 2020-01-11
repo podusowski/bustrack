@@ -71,7 +71,7 @@ mod tests
 {
     #[test]
     fn read_simple_ecsv() {
-        let input = vec!["$x;y", "1;2", "3;4"];
+        let input = vec!["$x;y", "1;2", "3;4", "$ lat;lon", "5;6"];
         let mut ecsv = super::Ecsv::new(input);
 
         assert_eq!(Some(hashmap!(String::from("x") => String::from("1"),
@@ -79,6 +79,9 @@ mod tests
 
         assert_eq!(Some(hashmap!(String::from("x") => String::from("3"),
                                  String::from("y") => String::from("4"))), ecsv.next());
+
+        assert_eq!(Some(hashmap!(String::from("lat") => String::from("5"),
+                                 String::from("lon") => String::from("6"))), ecsv.next());
 
         assert_eq!(None, ecsv.next());
     }
