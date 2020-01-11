@@ -1,6 +1,6 @@
-use std::io::{self, Read};
+use std::io;
 use std::collections::HashMap;
-use std::iter::{Iterator, FromIterator};
+use std::iter::Iterator;
 
 #[macro_use] extern crate maplit;
 
