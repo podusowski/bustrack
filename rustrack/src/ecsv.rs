@@ -1,21 +1,21 @@
 use std::iter::{Iterator, FromIterator};
 use std::collections::HashMap;
 
-pub struct Ecsv<T> where T: IntoIterator
+pub struct Ecsv<T> where T: Iterator
 {
-    input: T::IntoIter,
+    input: T,
     fmt: Vec::<String>
 }
 
-impl<T> Ecsv<T> where T: IntoIterator<Item=String>
+impl<T> Ecsv<T> where T: Iterator
 {
     pub fn new(reader: T) -> Ecsv<T>
     {
-        Ecsv::<T>{input: reader.into_iter(), fmt: Vec::new()}
+        Ecsv::<T>{input: reader, fmt: Vec::new()}
     }
 }
 
-impl<T> Iterator for Ecsv<T> where T: IntoIterator<Item=String>
+impl<T> Iterator for Ecsv<T> where T: Iterator<Item=String>
 {
     type Item = HashMap::<String, String>;
 
