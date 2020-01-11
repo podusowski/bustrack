@@ -44,7 +44,6 @@ impl<'a, T> Iterator for Ecsv<T> where T: IntoIterator<Item=&'a str>
 #[cfg(test)]
 mod tests
 {
-
     #[test]
     fn read_simple_ecsv() {
         let input = vec!["$x;y", "1;2", "3;4", "$ lat;lon", "5;6"];
