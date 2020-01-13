@@ -16,7 +16,9 @@ struct Record {
 }
 
 #[derive(Debug)]
-struct RecordParseError;
+struct RecordParseError {
+    what: String
+}
 
 impl From<std::num::ParseIntError> for RecordParseError {
     fn from(_: std::num::ParseIntError) -> RecordParseError {
@@ -24,12 +26,28 @@ impl From<std::num::ParseIntError> for RecordParseError {
     }
 }
 
+impl From<std::num::ParseFloatError> for RecordParseError {
+    fn from(_: std::num::ParseFloatError) -> RecordParseError {
+        RecordParseError {}
+    }
+}
+
+fn get_parsed<T: std::str::FromStr>(map: &HashMap<String, String>, key: &str) -> Result<T, ()> {
+    if let Some(value) = map.get(key) {
+        match value.parse::<T>() {
+            Ok(value) => return Ok(value),
+            Err(error) => return Err(error.to_string())
+        }
+    }
+    Err(())
+}
+
 impl Record {
-    fn from_map(map: HashMap<String, String>) -> Result<Record, RecordParseError> {
+    fn from_map(map: HashMap<String, String>) -> Result<Record, ()> {
         Ok(Record {
-            line: map["line"].parse::<u32>()?,
-            lat: 0.0,
-            lon: 0.0,
+            line: get_parsed(&map, "line")?,
+            lat: get_parsed(&map, "lat")?,
+            lon: get_parsed(&map, "lon")?
         })
     }
 }
