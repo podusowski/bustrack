@@ -17,7 +17,7 @@ struct Record {
 
 #[derive(Debug)]
 struct RecordParseError {
-    what: String
+    what: String,
 }
 
 impl RecordParseError {
@@ -33,7 +33,11 @@ fn get_parsed<T: std::str::FromStr>(map: &HashMap<String, String>, key: &str) ->
             Err(error) => return Err(RecordParseError::new(error.to_string()))
         }
     }
-    Err(RecordParseError::new(format!("no such key: {}", key)))
+    Err(RecordParseError::new(format!("no such key: {} in {:?}", key, map)))
+}
+
+fn parse_position(s: &String) -> Result<(f32, f32), RecordParseError> {
+    Err(RecordParseError::new("unimpl".to_string()))
 }
 
 impl Record {
