@@ -20,30 +20,24 @@ struct RecordParseError {
     what: String
 }
 
-impl From<std::num::ParseIntError> for RecordParseError {
-    fn from(_: std::num::ParseIntError) -> RecordParseError {
-        RecordParseError {}
+impl RecordParseError {
+    fn new(what: String) -> RecordParseError {
+        RecordParseError{what: what}
     }
 }
 
-impl From<std::num::ParseFloatError> for RecordParseError {
-    fn from(_: std::num::ParseFloatError) -> RecordParseError {
-        RecordParseError {}
-    }
-}
-
-fn get_parsed<T: std::str::FromStr>(map: &HashMap<String, String>, key: &str) -> Result<T, ()> {
+fn get_parsed<T: std::str::FromStr>(map: &HashMap<String, String>, key: &str) -> Result<T, RecordParseError> where T::Err: ToString {
     if let Some(value) = map.get(key) {
         match value.parse::<T>() {
             Ok(value) => return Ok(value),
-            Err(error) => return Err(error.to_string())
+            Err(error) => return Err(RecordParseError::new(error.to_string()))
         }
     }
-    Err(())
+    Err(RecordParseError::new(format!("no such key: {}", key)))
 }
 
 impl Record {
-    fn from_map(map: HashMap<String, String>) -> Result<Record, ()> {
+    fn from_map(map: HashMap<String, String>) -> Result<Record, RecordParseError> {
         Ok(Record {
             line: get_parsed(&map, "line")?,
             lat: get_parsed(&map, "lat")?,
